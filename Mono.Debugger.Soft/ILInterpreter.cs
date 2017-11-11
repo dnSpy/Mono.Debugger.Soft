@@ -1,6 +1,4 @@
 using System;
-using Mono.Cecil.Cil;
-using Mono.Cecil.Metadata;
 
 namespace Mono.Debugger.Soft
 {

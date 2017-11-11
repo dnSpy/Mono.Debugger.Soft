@@ -1,7 +1,6 @@
 using System;
 using System.Reflection;
 using Mono.Debugger;
-using Mono.Cecil;
 using System.Collections.Generic;
 
 namespace Mono.Debugger.Soft
@@ -13,7 +12,6 @@ namespace Mono.Debugger.Soft
 		bool entry_point_set;
 		ModuleMirror main_module;
 		AssemblyName aname;
-		AssemblyDefinition meta;
 		AppDomainMirror domain;
 		Dictionary<string, long> typeCacheIgnoreCase = new Dictionary<string, long> (StringComparer.InvariantCultureIgnoreCase);
 		Dictionary<string, long> typeCache = new Dictionary<string, long> ();
@@ -110,23 +108,6 @@ namespace Mono.Debugger.Soft
 
 		public TypeMirror GetType (String name) {
 			return GetType (name, false, false);
-		}
-
-		/* 
-		 * An optional Cecil assembly which could be used to access metadata instead
-		 * of reading it from the debuggee.
-		 */
-		public AssemblyDefinition Metadata {
-			get {
-				return meta;
-			}
-			set {
-				if (value.MainModule.Name != ManifestModule.Name)
-					throw new ArgumentException ("The supplied assembly is named '" + value.MainModule.Name + "', while the assembly in the debuggee is named '" + ManifestModule.Name + "'.");
-				if (value.MainModule.Mvid != ManifestModule.ModuleVersionId)
-					throw new ArgumentException ("The supplied assembly's main module has guid '" + value.MainModule.Mvid + ", while the assembly in the debuggee has guid '" + ManifestModule.ModuleVersionId + "'.", "value");
-				meta = value;
-			}
 		}
     }
 }
