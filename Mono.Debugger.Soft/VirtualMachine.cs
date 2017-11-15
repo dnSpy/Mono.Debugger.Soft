@@ -512,11 +512,14 @@ namespace Mono.Debugger.Soft
 	    }
 
 		internal TypeMirror[] GetTypes (long[] ids) {
+			if (ids == null)
+				return emptyTypeMirrors;
 			var res = new TypeMirror [ids.Length];
 			for (int i = 0; i < ids.Length; ++i)
 				res [i] = GetType (ids [i]);
 			return res;
 		}
+		static readonly TypeMirror[] emptyTypeMirrors = new TypeMirror[0];
 
 		Dictionary <long, ObjectMirror> objects;
 		object objects_lock = new object ();
@@ -604,9 +607,11 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
-		internal EventRequest GetRequest (int id) {
+		internal EventRequest TryGetRequest (int id) {
 			lock (requests_lock) {
-				return requests [id];
+				EventRequest req;
+				requests.TryGetValue (id, out req);
+				return req;
 			}
 		}
 

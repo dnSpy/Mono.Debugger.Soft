@@ -35,6 +35,10 @@ namespace Mono.Debugger.Soft
 			threadStateInvalid = true;
 		}
 
+		public void InvalidateName() {
+			name = null;
+		}
+
 		internal void FetchFrames (bool mustFetch = false) {
 			lock (fetchingLocker) {
 				if (fetching || !cacheInvalid)
