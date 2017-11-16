@@ -8,9 +8,17 @@ namespace Mono.Debugger.Soft
 	 */
 	public class PrimitiveValue : Value {
 		object value;
+		ElementType etype;
 
-		public PrimitiveValue (VirtualMachine vm, object value) : base (vm, 0) {
+		public PrimitiveValue (VirtualMachine vm, ElementType etype, object value) : base (vm, 0) {
+			this.etype = etype;
 			this.value = value;
+		}
+
+		public ElementType Type {
+			get {
+				return etype;
+			}
 		}
 
 		public object Value {

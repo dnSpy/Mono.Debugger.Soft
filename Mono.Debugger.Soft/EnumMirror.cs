@@ -27,9 +27,6 @@ namespace Mono.Debugger.Soft
 			get {
 				return ((PrimitiveValue)Fields [0]).Value;
 			}
-			set {
-				SetField (0, vm.CreateValue (value));
-			}
 		}
 
 		public string StringValue {

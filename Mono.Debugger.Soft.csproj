@@ -103,7 +103,7 @@
     <Compile Include="Mono.Debugger.Soft\ObjectCollectedException.cs" />
     <Compile Include="Mono.Debugger.Soft\ObjectMirror.cs" />
     <Compile Include="Mono.Debugger.Soft\ParameterInfoMirror.cs" />
-    <Compile Include="Mono.Debugger.Soft\PointerValue.cs" />
+    <None Include="Mono.Debugger.Soft\PointerValue.cs" />
     <Compile Include="Mono.Debugger.Soft\PrimitiveValue.cs" />
     <Compile Include="Mono.Debugger.Soft\PropertyInfoMirror.cs" />
     <Compile Include="Mono.Debugger.Soft\StackFrame.cs" />

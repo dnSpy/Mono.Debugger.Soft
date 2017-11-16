@@ -164,7 +164,7 @@ namespace Mono.Debugger.Soft
 		VIRTUAL = 16,
 	}
 
-	enum ElementType {
+	public enum ElementType {
 		End		 = 0x00,
 		Void		= 0x01,
 		Boolean	 = 0x02,

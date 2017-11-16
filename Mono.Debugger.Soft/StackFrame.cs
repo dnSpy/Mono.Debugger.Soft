@@ -86,7 +86,7 @@ namespace Mono.Debugger.Soft
 
 		public int ILOffset {
 			get {
-				return Location.ILOffset;
+				return il_offset;
 			}
 		}
 

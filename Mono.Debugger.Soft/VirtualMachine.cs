@@ -204,14 +204,8 @@ namespace Mono.Debugger.Soft
 		}
 
 		// Same as the mirrorOf methods in JDI
-		public PrimitiveValue CreateValue (object value) {
-			if (value == null)
-				return new PrimitiveValue (vm, null);
-
-			if (!value.GetType ().IsPrimitive)
-				throw new ArgumentException ("value must be of a primitive type instead of '" + value.GetType () + "'", "value");
-
-			return new PrimitiveValue (vm, value);
+		public PrimitiveValue CreateNullValue () {
+			return new PrimitiveValue (vm, ElementType.Object, null);
 		}
 
 		public EnumMirror CreateEnumMirror (TypeMirror type, PrimitiveValue value) {
@@ -621,7 +615,7 @@ namespace Mono.Debugger.Soft
 
 		internal Value DecodeValue (ValueImpl v, Dictionary<int, Value> parent_vtypes) {
 			if (v.Value != null)
-				return new PrimitiveValue (this, v.Value);
+				return new PrimitiveValue (this, v.Type, v.Value);
 
 			switch (v.Type) {
 			case ElementType.Void:
@@ -647,7 +641,7 @@ namespace Mono.Debugger.Soft
 				parent_vtypes.Remove (parent_vtypes.Count - 1);
 				return vtype;
 			case (ElementType)ValueTypeId.VALUE_TYPE_ID_NULL:
-				return new PrimitiveValue (this, null);
+				return new PrimitiveValue (this, ElementType.Object, null);
 			case (ElementType)ValueTypeId.VALUE_TYPE_ID_PARENT_VTYPE:
 				return parent_vtypes [v.Index];
 			default:
