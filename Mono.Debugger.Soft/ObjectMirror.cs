@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace Mono.Debugger.Soft
 {
 	public class InvokeResult {
+		public ObjectMirror Exception { get; set; }
 		public Value Result { get; set; }
 		//
 		// The value of the receiver after the call for calls to valuetype methods or null.
@@ -142,44 +143,12 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
-		public Value InvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments) {
-			return InvokeMethod (vm, thread, method, this, arguments, InvokeOptions.None);
-		}
-
-		public Value InvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options) {
-			return InvokeMethod (vm, thread, method, this, arguments, options);
-		}
-
-		[Obsolete ("Use the overload without the 'vm' argument")]
-		public IAsyncResult BeginInvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
+		public IInvokeAsyncResult BeginInvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
 			return BeginInvokeMethod (vm, thread, method, this, arguments, options, callback, state);
-		}
-
-		public IAsyncResult BeginInvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
-			return BeginInvokeMethod (vm, thread, method, this, arguments, options, callback, state);
-		}
-
-		public Value EndInvokeMethod (IAsyncResult asyncResult) {
-			return EndInvokeMethodInternal (asyncResult);
 		}
 
 		public InvokeResult EndInvokeMethodWithResult (IAsyncResult asyncResult) {
 			return  ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
-		}
-
-		public Task<Value> InvokeMethodAsync (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
-			var tcs = new TaskCompletionSource<Value> ();
-			BeginInvokeMethod (thread, method, arguments, options, iar =>
-					{
-						try {
-							tcs.SetResult (EndInvokeMethod (iar));
-						} catch (OperationCanceledException) {
-							tcs.TrySetCanceled ();
-						} catch (Exception ex) {
-							tcs.TrySetException (ex);
-						}
-					}, null);
-			return tcs.Task;
 		}
 
 		public Task<InvokeResult> InvokeMethodAsyncWithResult (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
@@ -283,6 +252,11 @@ namespace Mono.Debugger.Soft
 
 				ObjectMirror.AbortInvoke (VM, Thread, ID);
 			}
+
+			public void Dispose ()
+			{
+				AsyncWaitHandle.Dispose ();
+			}
 		}
 
 		internal static IInvokeAsyncResult BeginInvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
@@ -355,7 +329,7 @@ namespace Mono.Debugger.Soft
 				throw new NotImplementedException ();
 			} else {
 				if (r.Exception != null)
-					throw new InvocationException ((ObjectMirror)r.VM.DecodeValue (r.Exception));
+					return new InvokeResult () { Exception = (ObjectMirror)r.VM.DecodeValue (r.Exception) };
 
 				Value out_this = null;
 				if (r.OutThis != null)
@@ -368,11 +342,6 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
- 	    internal static Value EndInvokeMethodInternal (IAsyncResult asyncResult) {
-			InvokeResult res = EndInvokeMethodInternalWithResult (asyncResult);
-			return res.Result;
-		}
-
 	    internal static void EndInvokeMultipleInternal (IAsyncResult asyncResult) {
 			if (asyncResult == null)
 				throw new ArgumentNullException ("asyncResult");
@@ -381,10 +350,6 @@ namespace Mono.Debugger.Soft
 
 			if (!r.IsCompleted)
 				r.AsyncWaitHandle.WaitOne ();
-		}
-
-		internal static Value InvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options) {
-			return EndInvokeMethodInternal (BeginInvokeMethod (vm, thread, method, this_obj, arguments, options, null, null));
 		}
 
 		internal static void AbortInvoke (VirtualMachine vm, ThreadMirror thread, int id)

@@ -66,30 +66,8 @@ namespace Mono.Debugger.Soft
 			fields [index] = value;
 		}
 
-		public Value InvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments) {
-			return ObjectMirror.InvokeMethod (vm, thread, method, this, arguments, InvokeOptions.None);
-		}
-
-		public Value InvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options) {
-			return ObjectMirror.InvokeMethod (vm, thread, method, this, arguments, options);
-		}
-
-		[Obsolete ("Use the overload without the 'vm' argument")]
-		public IAsyncResult BeginInvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
+		public IInvokeAsyncResult BeginInvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
 			return ObjectMirror.BeginInvokeMethod (vm, thread, method, this, arguments, options, callback, state);
-		}
-
-		public IAsyncResult BeginInvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
-			return ObjectMirror.BeginInvokeMethod (vm, thread, method, this, arguments, options, callback, state);
-		}
-
-		public Value EndInvokeMethod (IAsyncResult asyncResult) {
-			var result = ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
-			var outThis = result.OutThis as StructMirror;
-			if (outThis != null) {
-				SetFields (outThis.Fields);
-			}
-			return result.Result;
 		}
 
 		public InvokeResult EndInvokeMethodWithResult (IAsyncResult asyncResult) {
@@ -99,21 +77,6 @@ namespace Mono.Debugger.Soft
 				SetFields (outThis.Fields);
 			}
 			return result;
-		}
-
-		public Task<Value> InvokeMethodAsync (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
-			var tcs = new TaskCompletionSource<Value> ();
-			BeginInvokeMethod (thread, method, arguments, options, iar =>
-					{
-						try {
-							tcs.SetResult (EndInvokeMethod (iar));
-						} catch (OperationCanceledException) {
-							tcs.TrySetCanceled ();
-						} catch (Exception ex) {
-							tcs.TrySetException (ex);
-						}
-					}, null);
-			return tcs.Task;
 		}
 
 		public Task<InvokeResult> InvokeMethodAsyncWithResult (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {

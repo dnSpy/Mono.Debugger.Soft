@@ -6,28 +6,37 @@ namespace Mono.Debugger.Soft
 {
 	public class ArrayMirror : ObjectMirror, IEnumerable {
 
-		public int[] lengths;
-		public int[] lower_bounds;
-		public int rank;
+		int[] lengths;
+		int[] lower_bounds;
+		int rank;
+		int length;
 
 		internal ArrayMirror (VirtualMachine vm, long id) : base (vm, id) {
+			length = -1;
 		}
 
 		internal ArrayMirror (VirtualMachine vm, long id, TypeMirror type, AppDomainMirror domain) : base (vm, id, type, domain) {
+			length = -1;
 		}
 
 		public int Length {
 			get {
-				GetLengths ();
-
-				int length = lengths [0];
-
-				for (int i = 1; i < Rank; i++) {
-					length *= lengths [i];
-				}
+				if (length == -1)
+					InitializeLength ();
 
 				return length;
 			}
+		}
+
+		void InitializeLength () {
+			GetLengths ();
+
+			int l = lengths [0];
+
+			for (int i = 1; i < Rank; i++) {
+				l *= lengths [i];
+			}
+			length = l;
 		}
 
 		public int Rank {
