@@ -143,29 +143,6 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
-		public IInvokeAsyncResult BeginInvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
-			return BeginInvokeMethod (vm, thread, method, this, arguments, options, callback, state);
-		}
-
-		public InvokeResult EndInvokeMethodWithResult (IAsyncResult asyncResult) {
-			return  ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
-		}
-
-		public Task<InvokeResult> InvokeMethodAsyncWithResult (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options = InvokeOptions.None) {
-			var tcs = new TaskCompletionSource<InvokeResult> ();
-			BeginInvokeMethod (thread, method, arguments, options, iar =>
-					{
-						try {
-							tcs.SetResult (EndInvokeMethodInternalWithResult (iar));
-						} catch (OperationCanceledException) {
-							tcs.TrySetCanceled ();
-						} catch (Exception ex) {
-							tcs.TrySetException (ex);
-						}
-					}, null);
-			return tcs.Task;
-		}
-
 		//
 		// Invoke the members of METHODS one-by-one, calling CALLBACK after each invoke was finished. The IAsyncResult will be marked as completed after all invokes have
 		// finished. The callback will be called with a different IAsyncResult that represents one method invocation.
@@ -247,15 +224,18 @@ namespace Mono.Debugger.Soft
 
 			public void Abort ()
 			{
+				aborted = true;
 				if (ID == 0) // Ooops
 					return;
 
 				ObjectMirror.AbortInvoke (VM, Thread, ID);
 			}
+			bool aborted;
 
 			public void Dispose ()
 			{
-				AsyncWaitHandle.Dispose ();
+				if (!aborted)
+					AsyncWaitHandle.Dispose ();
 			}
 		}
 

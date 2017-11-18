@@ -47,13 +47,5 @@ namespace Mono.Debugger.Soft
 
 			return "PrimitiveValue<" + (v != null ? v.ToString () : "(null)") + ">";
 		}
-
-		public IInvokeAsyncResult BeginInvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
-			return ObjectMirror.BeginInvokeMethod (vm, thread, method, this, arguments, options, callback, state);
-		}
-
-		public InvokeResult EndInvokeMethodWithResult (IAsyncResult asyncResult) {
-			return  ObjectMirror.EndInvokeMethodInternalWithResult (asyncResult);
-		}
 	}
 }
