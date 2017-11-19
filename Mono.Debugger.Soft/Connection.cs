@@ -882,13 +882,28 @@ namespace Mono.Debugger.Soft
 		}
 
 		class PacketWriter {
+			sealed class Cache {
+				const int DEFAULT_SIZE = 1024;
+				const int MAX_SIZE = 4096;
+				static byte[] byteArrayData;
+				public static byte[] AllocateByteArray () => Interlocked.Exchange(ref byteArrayData, null) ?? new byte [DEFAULT_SIZE];
+				public static void Free (ref byte[] data) {
+					if (data.Length <= MAX_SIZE)
+						byteArrayData = data;
+					data = null;
+				}
+			}
 
 			byte[] data;
 			int offset;
 
 			public PacketWriter () {
-				data = new byte [1024];
+				data = Cache.AllocateByteArray ();
 				offset = 0;
+			}
+
+			public void Dispose () {
+				Cache.Free (ref data);
 			}
 
 			void MakeRoom (int size) {
@@ -1492,8 +1507,10 @@ namespace Mono.Debugger.Soft
 			byte[] encoded_packet;
 			if (packet == null)
 				encoded_packet = EncodePacket (id, (int)command_set, command, null, 0);
-			else
+			else {
 				encoded_packet = EncodePacket (id, (int)command_set, command, packet.Data, packet.Offset);
+				packet.Dispose ();
+			}
 
 			if (cb != null) {
 				lock (reply_packets_monitor) {
@@ -1535,8 +1552,10 @@ namespace Mono.Debugger.Soft
 
 			if (packet == null)
 				encoded_packet = EncodePacket (id, (int)command_set, command, null, 0);
-			else
+			else {
 				encoded_packet = EncodePacket (id, (int)command_set, command, packet.Data, packet.Offset);
+				packet.Dispose ();
+			}
 
 			WritePacket (encoded_packet);
 

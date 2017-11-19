@@ -212,6 +212,10 @@ namespace Mono.Debugger.Soft
 			return new EnumMirror (this, type, value);
 		}
 
+		public StructMirror CreateStructMirror (TypeMirror type, Value[] fields) {
+			return new StructMirror (this, type, fields);
+		}
+
 		//
 		// Enable send and receive timeouts on the connection and send a keepalive event
 		// every 'keepalive_interval' milliseconds.
