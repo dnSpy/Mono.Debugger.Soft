@@ -6,16 +6,6 @@ namespace Mono.Debugger.Soft
 {
 	public class ThreadMirror : ObjectMirror
 	{
-		public static int MaxFrames {
-			get {
-				return maxFrames;
-			}
-			set {
-				maxFrames = value;
-			}
-		}
-		static int maxFrames = -1;
-
 		string name;
 		bool cacheInvalid = true;
 		bool fetching;
@@ -57,7 +47,7 @@ namespace Mono.Debugger.Soft
 				fetching = true;
 				fetchingEvent.Reset ();
 			}
-			vm.conn.Thread_GetFrameInfo (id, 0, maxFrames, (frame_info) => {
+			vm.conn.Thread_GetFrameInfo (id, 0, -1, (frame_info) => {
 				var framesList = new List<StackFrame> ();
 				for (int i = 0; i < frame_info.Length; ++i) {
 					var frameInfo = (FrameInfo)frame_info [i];
