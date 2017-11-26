@@ -484,13 +484,6 @@ namespace Mono.Debugger.Soft
 			}
 	    }
 
-		internal void InvalidateAssemblyCaches () {
-			lock (domains_lock) {
-				foreach (var d in domains.Values)
-					d.InvalidateAssembliesCache ();
-			}
-		}
-
 		Dictionary <long, TypeMirror> types;
 		object types_lock = new object ();
 
@@ -737,11 +730,9 @@ namespace Mono.Debugger.Soft
 					l.Add (new ThreadDeathEvent (vm, req_id, id));
 					break;
 				case EventType.AssemblyLoad:
-					vm.InvalidateAssemblyCaches ();
 					l.Add (new AssemblyLoadEvent (vm, req_id, thread_id, id));
 					break;
 				case EventType.AssemblyUnload:
-					vm.InvalidateAssemblyCaches ();
 					l.Add (new AssemblyUnloadEvent (vm, req_id, thread_id, id));
 					break;
 				case EventType.TypeLoad:

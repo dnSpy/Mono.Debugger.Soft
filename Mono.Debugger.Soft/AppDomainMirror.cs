@@ -8,7 +8,6 @@ namespace Mono.Debugger.Soft
 		string friendly_name;
 		AssemblyMirror entry_assembly, corlib;
 		AssemblyMirror[] assemblies;
-		bool assembliesCacheIsInvalid = true;
 		object assembliesCacheLocker = new object ();
 
 		internal AppDomainMirror (VirtualMachine vm, long id) : base (vm, id) {
@@ -23,23 +22,12 @@ namespace Mono.Debugger.Soft
 			}
 	    }
 
-		internal void InvalidateAssembliesCache () {
-			assembliesCacheIsInvalid = true;
-		}
-
 		public AssemblyMirror[] GetAssemblies () {
-			if (assembliesCacheIsInvalid) {
-				lock (assembliesCacheLocker) {
-					if (assembliesCacheIsInvalid) {
-						long[] ids = vm.conn.Domain_GetAssemblies (id);
-						assemblies = new AssemblyMirror [ids.Length];
-						// FIXME: Uniqueness
-						for (int i = 0; i < ids.Length; ++i)
-							assemblies [i] = vm.GetAssembly (ids [i]);
-						Thread.MemoryBarrier ();
-						assembliesCacheIsInvalid = false;
-					}
-				}
+			lock (assembliesCacheLocker) {
+				long[] ids = vm.conn.Domain_GetAssemblies (id);
+				assemblies = new AssemblyMirror [ids.Length];
+				for (int i = 0; i < ids.Length; ++i)
+					assemblies [i] = vm.GetAssembly (ids [i]);
 			}
 			return assemblies;
 		}
