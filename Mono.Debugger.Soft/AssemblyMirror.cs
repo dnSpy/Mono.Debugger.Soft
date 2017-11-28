@@ -49,12 +49,13 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
-		// Since Protocol version 2.45
 		public AppDomainMirror Domain {
 			get {
 				if (domain == null) {
-					vm.CheckProtocolVersion (2, 45);
-					domain = vm.GetDomain (vm.conn.Assembly_GetIdDomain (id));
+					if (vm.Version.AtLeast (2, 45))
+						domain = vm.GetDomain (vm.conn.Assembly_GetIdDomain (id));
+					else
+						domain = GetAssemblyObject ().Domain;
 				}
 				return domain;
 			}

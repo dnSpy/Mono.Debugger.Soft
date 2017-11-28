@@ -40,11 +40,10 @@ namespace Mono.Debugger.Soft
 						try {
 							domain = vm.GetDomain (vm.conn.StackFrame_GetDomain (thread.Id, Id));
 						} catch (AbsentInformationException) {
-							domain = Thread.Domain;
 						}
-					} else {
-						domain = Thread.Domain;
 					}
+					if (domain == null)
+						domain = Thread.Domain;
 				}
 
 				return domain;

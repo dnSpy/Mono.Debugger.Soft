@@ -6,6 +6,8 @@ namespace Mono.Debugger.Soft
 {
 	public sealed class BreakpointEventRequest : EventRequest {
 
+		public object Tag { get; set; }
+
 		MethodMirror method;
 		long location;
 		
@@ -13,8 +15,6 @@ namespace Mono.Debugger.Soft
 			if (method == null)
 				throw new ArgumentNullException ("method");
 			CheckMirror (vm, method);
-			if (method.Locations.Count > 0 && !method.Locations.Any (l => l.ILOffset == location))
-				throw new ArgumentException ("A breakpoint can only be set at an IL offset which is equal to the ILOffset property of one of the locations in method.Locations", "location");
 			this.method = method;
 			this.location = location;
 		}

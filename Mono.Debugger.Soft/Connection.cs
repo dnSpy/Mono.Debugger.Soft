@@ -2357,14 +2357,14 @@ namespace Mono.Debugger.Soft
 						var em = mod as ExceptionModifier;
 						w.WriteByte ((byte)ModifierKind.EXCEPTION_ONLY);
 						w.WriteId (em.Type);
-						if (Version.MajorVersion > 2 || Version.MinorVersion > 0) {
+						if (Version.AtLeast (2, 1)) {
 							/* This is only supported in protocol version 2.1 */
 							w.WriteBool (em.Caught);
 							w.WriteBool (em.Uncaught);
 						} else if (!em.Caught || !em.Uncaught) {
 							throw new NotSupportedException ("This request is not supported by the protocol version implemented by the debuggee.");
 						}
-						if (Version.MajorVersion > 2 || Version.MinorVersion > 24) {
+						if (Version.AtLeast (2, 25)) {
 							w.WriteBool (em.Subclasses);
 						} else if (!em.Subclasses) {
 							throw new NotSupportedException ("This request is not supported by the protocol version implemented by the debuggee.");

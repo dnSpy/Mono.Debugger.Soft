@@ -116,9 +116,7 @@ namespace Mono.Debugger.Soft
 			if (enabled) {
 				vm.conn.ClearEventRequest (etype, id);
 				enabled = false;
-				// FIXME: This causes problems because Events can still reference
-				// the old id
-				//vm.RemoveRequest (this, id);
+				vm.RemoveRequest (this, id);
 				id = -1;
 			}
 		}
