@@ -304,6 +304,8 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		// Removed since it's not safe to call it if v < 2.12 (eg. it's a nested generic)
+#if false
 		public bool IsGenericType {
 			get {
 				if (vm.Version.AtLeast (2, 12)) {
@@ -313,6 +315,7 @@ namespace Mono.Debugger.Soft
 				}
 			}
 		}
+#endif
 
 		public TypeMirror GetElementType () {
 			GetInfo ();

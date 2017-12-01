@@ -11,7 +11,7 @@ namespace Mono.Debugger.Soft
 		internal ExceptionEventRequest (VirtualMachine vm, TypeMirror exc_type, bool caught, bool uncaught) : base (vm, EventType.Exception) {
 			if (exc_type != null) {
 				CheckMirror (vm, exc_type);
-				TypeMirror exception_type = vm.RootDomain.Corlib.GetType ("System.Exception", false, false);
+				TypeMirror exception_type = exc_type.Assembly.Domain.Corlib.GetType ("System.Exception", false, false);
 				if (!exception_type.IsAssignableFrom (exc_type))
 					throw new ArgumentException ("The exception type does not inherit from System.Exception", "exc_type");
 			}

@@ -53,7 +53,7 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
-		public AppDomainMirror Domain {
+		public virtual AppDomainMirror Domain {
 			get {
 				if (domain == null) {
 					if (vm.conn.Version.AtLeast (2, 5))

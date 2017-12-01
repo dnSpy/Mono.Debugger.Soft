@@ -43,7 +43,7 @@ namespace Mono.Debugger.Soft
 						}
 					}
 					if (domain == null)
-						domain = Thread.Domain;
+						domain = method.DeclaringType.Assembly.Domain;
 				}
 
 				return domain;
