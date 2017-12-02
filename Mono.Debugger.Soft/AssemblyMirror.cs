@@ -14,7 +14,7 @@ namespace Mono.Debugger.Soft
 		AssemblyName aname;
 		AppDomainMirror domain;
 		Dictionary<string, long> typeCacheIgnoreCase = new Dictionary<string, long> (StringComparer.InvariantCultureIgnoreCase);
-		Dictionary<string, long> typeCache = new Dictionary<string, long> ();
+		Dictionary<string, long> typeCache = new Dictionary<string, long> (StringComparer.Ordinal);
 
 		internal AssemblyMirror (VirtualMachine vm, long id) : base (vm, id) {
 		}
