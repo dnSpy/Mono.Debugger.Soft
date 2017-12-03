@@ -89,6 +89,10 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		public void SetILOffset (int new_il_offset) {
+			il_offset = new_il_offset;
+		}
+
 		public int LineNumber {
 			get {
 				return Location.LineNumber;
