@@ -24,6 +24,8 @@ namespace Mono.Debugger.Soft
 
 		public override AppDomainMirror Domain {
 			get {
+				if (!vm.HasMultipleDomains)
+					return base.Domain;
 				var frames = GetFrames ();
 				return frames.Length == 0 ? base.Domain : frames [0].Method?.DeclaringType.Assembly.Domain ?? base.Domain;
 			}

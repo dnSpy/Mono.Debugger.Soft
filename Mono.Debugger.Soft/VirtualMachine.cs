@@ -469,6 +469,11 @@ namespace Mono.Debugger.Soft
 		Dictionary <long, AppDomainMirror> domains;
 		object domains_lock = new object ();
 
+		internal bool HasMultipleDomains {
+			get { return hasMultipleDomains; }
+		}
+		volatile bool hasMultipleDomains;
+
 		internal AppDomainMirror GetDomain (long id) {
 			lock (domains_lock) {
 				if (domains == null)
@@ -480,6 +485,7 @@ namespace Mono.Debugger.Soft
 					obj = new AppDomainMirror (this, id);
 					domains [id] = obj;
 				}
+				hasMultipleDomains = domains.Count > 1;
 				return obj;
 			}
 	    }
