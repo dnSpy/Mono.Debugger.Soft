@@ -766,6 +766,10 @@ namespace Mono.Debugger.Soft
 				}
 			}
 
+			public bool CanRead (int size) {
+				return offset + size <= packet.Length;
+			}
+
 			public int ReadByte () {
 				return decode_byte (packet, ref offset);
 			}
@@ -2059,16 +2063,21 @@ namespace Mono.Debugger.Soft
 
 		internal void Thread_GetFrameInfo (long id, int start_frame, int length, Action<FrameInfo[]> resultCallaback) {
 			Send (CommandSet.THREAD, (int)CmdThread.GET_FRAME_INFO, new PacketWriter ().WriteId (id).WriteInt (start_frame).WriteInt (length), (res) => {
-				int count = res.ReadInt ();
+				int count = res.ErrorCode == 0 && res.CanRead (4) ? res.ReadInt () : 0;
 				var frames = new FrameInfo[count];
+				int w = 0;
 				for (int i = 0; i < count; ++i) {
+					if (!res.CanRead (4 + 4 + 4 + 1))
+						break;
 					var f = new FrameInfo ();
 					f.id = res.ReadInt ();
 					f.method = res.ReadId ();
 					f.il_offset = res.ReadInt ();
 					f.flags = (StackFrameFlags)res.ReadByte ();
-					frames [i] = f;
+					frames [w++] = f;
 				}
+				if (w != frames.Length)
+					Array.Resize (ref frames, w);
 				resultCallaback (frames);
 			}, 1);
 		}

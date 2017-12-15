@@ -24,6 +24,7 @@ namespace Mono.Debugger.Soft
 
 		public override AppDomainMirror Domain {
 			get {
+				// Prevents hangs and crashes if it's an unpatched Unity mono.dll
 				if (!vm.HasMultipleDomains)
 					return base.Domain;
 				var frames = GetFrames ();
