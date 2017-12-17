@@ -23,7 +23,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\..\..\dnSpy.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>dnSpy.Mono.Debugger.Soft.snk</AssemblyOriginatorKeyFile>
     <Features>strict</Features>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
