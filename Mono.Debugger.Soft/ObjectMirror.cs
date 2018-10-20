@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -284,8 +283,9 @@ namespace Mono.Debugger.Soft
 			r.IsCompleted = true;
 			((ManualResetEvent)r.AsyncWaitHandle).Set ();
 
-			if (r.Callback != null)
-				r.Callback.BeginInvoke (r, null, null);
+			var rc = r.Callback;
+			if (rc != null)
+				Task.Run(() => rc (r));
 		}
 
 	    internal static InvokeResult EndInvokeMethodInternalWithResult (IAsyncResult asyncResult) {
@@ -405,7 +405,7 @@ namespace Mono.Debugger.Soft
 				r2.Exception = exc;
 			}
 
-			r.Callback.BeginInvoke (r2, null, null);
+			Task.Run(() => r.Callback (r2));
 		}
 	}
 }

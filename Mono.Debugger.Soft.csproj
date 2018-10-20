@@ -29,8 +29,4 @@
     <None Remove="Test\*" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="System.Net" />
-  </ItemGroup>
-
 </Project>
