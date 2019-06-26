@@ -1257,7 +1257,7 @@ namespace Mono.Debugger.Soft
 						break;
 				} catch (ThreadAbortException) {
 					break;
-				} catch (Exception ex) {
+				} catch (Exception) {
 					//if (!closed) {
 					//	Console.WriteLine (ex);
 					//}
