@@ -53,6 +53,7 @@ namespace Mono {
 //  `XXXX' because it is not visible from outside this assembly
 #pragma warning disable  3019
 #endif
+#if truex
 		static DataConverter SwapConv = new SwapConverter ();
 		static DataConverter CopyConv = new CopyConverter ();
 
@@ -1222,8 +1223,10 @@ namespace Mono {
 				}
 			}
 		}
-		
+#endif
+
 #if MONO_DATACONVERTER_STATIC_METHODS
+#if truex
 		static unsafe void PutBytesLE (byte *dest, byte *src, int count)
 		{
 			int i = 0;
@@ -1237,6 +1240,7 @@ namespace Mono {
 					*(--dest) = *src++;
 			}
 		}
+#endif
 
 		static unsafe void PutBytesBE (byte *dest, byte *src, int count)
 		{
@@ -1252,6 +1256,7 @@ namespace Mono {
 			}
 		}
 
+#if truex
 		static unsafe void PutBytesNative (byte *dest, byte *src, int count)
 		{
 			int i = 0;
@@ -1387,6 +1392,7 @@ namespace Mono {
 			}
 			return ret;
 		}
+#endif
 
 		static public unsafe double DoubleFromBE (byte[] data, int index)
 		{
@@ -1420,6 +1426,7 @@ namespace Mono {
 			return ret;
 		}
 
+#if truex
 		static public unsafe long Int64FromBE (byte [] data, int index)
 		{
 			if (data == null)
@@ -1831,6 +1838,7 @@ namespace Mono {
 			return GetBytesSwap (BitConverter.IsLittleEndian, (byte *) &value, 8);
                 }
 #endif
-		
+#endif
+
 	}
 }
