@@ -1661,6 +1661,7 @@ namespace Mono {
 
                         return ret;
                 }
+#endif
 
                 unsafe static byte[] GetBytesSwap (bool swap, byte *ptr, int count)
                 {
@@ -1679,6 +1680,7 @@ namespace Mono {
                         return ret;
                 }
 		
+#if truex
                 unsafe public static byte[] GetBytesNative (bool value)
                 {
                         return GetBytesPtr ((byte *) &value, 1);
@@ -1827,6 +1829,7 @@ namespace Mono {
                 {
                         return GetBytesSwap (BitConverter.IsLittleEndian, (byte *) &value, 8);
                 }
+#endif
 
                 unsafe public static byte[] GetBytesBE (float value)
                 {
@@ -1837,7 +1840,6 @@ namespace Mono {
                 {
 			return GetBytesSwap (BitConverter.IsLittleEndian, (byte *) &value, 8);
                 }
-#endif
 #endif
 
 	}
